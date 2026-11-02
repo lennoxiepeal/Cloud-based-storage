@@ -1,113 +1,128 @@
-# ☁️ ValetKey Cloud Storage
+# Cloud Based Storage
 
-A modern, high-performance cloud storage application built with Spring Boot and React. Features direct S3 uploads, folder management, public file sharing, and comprehensive admin panel.
+Cloud Based Storage is a cloud-based file storage application built with Spring Boot and React. It supports file uploads to Amazon S3, folder organization, file sharing, storage quotas, and administrative controls.
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![React](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
+[![React](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://react.dev/)
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Latest-blue.svg)](https://www.postgresql.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8-blue.svg)](https://www.mysql.com/)
 [![AWS S3](https://img.shields.io/badge/AWS-S3-orange.svg)](https://aws.amazon.com/s3/)
 
-
 ## Architecture
-<img width="1476" height="1506" alt="image" src="https://github.com/user-attachments/assets/a8a9889a-6310-4657-8549-2b8c1409f7a7" />
 
+<img width="1476" height="1506" alt="Cloud Based Storage architecture diagram" src="https://github.com/user-attachments/assets/a8a9889a-6310-4657-8549-2b8c1409f7a7" />
 
-## ✨ Features
+## Features
 
-### Core Features
-- 📁 **Folder Management**: Create nested folders, navigate with breadcrumbs
-- 📤 **Direct S3 Upload**: Presigned URLs for fast, direct client-to-S3 uploads
-- 📥 **File Download**: Secure download URLs with expiration
-- 🔍 **Advanced Search**: Search files by name, type, size with filters
-- 🔗 **Public Sharing**: Generate shareable links for files
-- 💾 **Storage Quota**: Per-user storage limits with real-time tracking
-- 👥 **User Management**: Role-based access control (Admin/User)
-- 🔐 **Authentication**: Session-based authentication with Spring Security
+### File and folder management
 
-### Admin Panel
-- 📊 **System Statistics**: Total users, storage usage, quota overview
-- 👤 **User Management**: View all users, update permissions
-- 💾 **Quota Management**: Set storage quotas per user or globally
-- 📈 **Top Consumers**: Identify users with highest storage usage
-- ⚙️ **Permission Control**: Manage create, read, write permissions
+- **Folder organization:** Create nested folders and navigate between them using breadcrumbs.
+- **Direct S3 uploads:** Generate presigned URLs so clients can upload files directly to Amazon S3.
+- **File downloads:** Generate time-limited URLs for downloading stored files.
+- **File search:** Search by file name, type, and size, with support for filters.
+- **Public sharing:** Create shareable links for individual files.
+- **Storage quotas:** Set per-user storage limits and track usage.
+- **Access control:** Assign user and administrator roles.
+- **Authentication:** Authenticate users through Spring Security with session-based authentication.
 
-### Performance Optimizations
-- ⚡ **Async Processing**: Asynchronous upload URL generation
-- 🚀 **Connection Pooling**: Optimized HikariCP configuration
-- 💨 **Caching**: Spring Cache for storage quota and folder tree
-- 🔄 **Bulk Operations**: Efficient bulk delete, move, download
-- 📊 **Load Balancing Ready**: Configured for high concurrency
+### Administration
 
-### Backup & Monitoring
-- 🔄 **Automated Backup**: AWS SQS + Lambda for backup processing
-- 📊 **CloudWatch Metrics**: Real-time monitoring and metrics
-- 🔔 **Error Tracking**: Comprehensive error logging
+The administration panel provides tools for managing users and monitoring storage usage:
 
+- View system-wide user and storage statistics.
+- View user accounts and update their roles or permissions.
+- Set storage quotas for individual users or across the system.
+- Identify accounts with the highest storage usage.
+- Configure create, read, and write permissions.
 
-## 🛠️ Tech Stack
+### Performance
+
+- Generate upload URLs asynchronously.
+- Use HikariCP for database connection pooling.
+- Track per-user storage usage and quotas.
+- Support bulk file operations, including delete, move, and download.
+- Configure the application for deployment behind a load balancer.
+
+### Backup and monitoring
+
+- Process backup tasks using AWS SQS and Lambda.
+- Collect application metrics through AWS CloudWatch.
+- Record application errors for troubleshooting.
+
+## Technology Stack
 
 ### Backend
-- **Spring Boot 3.2.0** - Java framework
-- **Spring Security** - Authentication & authorization
-- **Spring Data JPA** - Database access
-- **HikariCP** - Connection pooling
-- **PostgreSQL** - Relational database
-- **AWS SDK** - S3, SQS, CloudWatch integration
-- **IBM COS SDK** - IBM Cloud Object Storage
+
+| Technology | Purpose |
+|---|---|
+| Spring Boot 3.2.0 | Application framework |
+| Spring Security | Authentication and authorization |
+| Spring Data JPA | Database access and persistence |
+| HikariCP | Database connection pooling |
+| MySQL 8 | Default database; PostgreSQL and H2 drivers are also included |
+| AWS SDK | Integration with S3, SQS, and CloudWatch |
+| AWS SDK S3 client | S3-compatible integration with IBM Cloud Object Storage |
 
 ### Frontend
-- **React 18.2.0** - UI framework
-- **React Router** - Routing
-- **Axios** - HTTP client
-- **React Icons** - Icon library
+
+| Technology | Purpose |
+|---|---|
+| React 18.2.0 | User interface |
+| React Router | Client-side routing |
+| Axios | HTTP requests |
+| React Icons | Interface icons |
 
 ### Infrastructure
-- **AWS S3** - Object storage
-- **AWS SQS** - Message queue
-- **AWS Lambda** - Serverless backup processing
-- **AWS CloudWatch** - Monitoring & metrics
-- **IBM COS** - Secondary backup storage
 
-## 📋 Prerequisites
+| Service | Purpose |
+|---|---|
+| AWS S3 | Primary object storage |
+| AWS SQS | Message queuing |
+| AWS Lambda | Serverless backup processing |
+| AWS CloudWatch | Monitoring and metrics |
+| IBM Cloud Object Storage | Secondary backup storage |
 
-- Java 17+
-- Node.js 16+ and npm
-- PostgreSQL 12+
-- Maven 3.6+
-- AWS Account (for S3, SQS, Lambda, CloudWatch)
-- IBM Cloud Account (optional, for backup)
+## Prerequisites
 
-## 🚀 Quick Start
+Make sure the following tools and accounts are available before setting up the project:
 
-### 1. Clone Repository
+- Java 17 or later
+- Node.js 16 or later and npm
+- MySQL 8 (used by the example configuration)
+- Maven 3.6 or later
+- An AWS account with access to S3, SQS, Lambda, and CloudWatch
+- An IBM Cloud account (optional, for backup storage)
+
+## Getting Started
+
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/valetKeyCloud.git
-cd valetKeyCloud
+git clone https://github.com/lennoxiepeal/Cloud-based-storage.git
+cd Cloud-based-storage
 ```
 
-### 2. Backend Setup
+### 2. Configure the backend
 
-#### Configure Database
+#### Database
 
-Create `src/main/resources/application.properties` from `application.properties.example`:
+Create `application.properties` from the provided example file:
 
 ```bash
 cp src/main/resources/application.properties.example src/main/resources/application.properties
 ```
 
-Edit `application.properties` with your database credentials:
+Create the MySQL database `cloud_based_storage`, then update `application.properties` (the example file uses the legacy database name):
 
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/valetkey
+spring.datasource.url=jdbc:mysql://localhost:3306/cloud_based_storage?useSSL=false&allowPublicKeyRetrieval=true
 spring.datasource.username=your_username
 spring.datasource.password=your_password
 ```
 
-#### Configure AWS
+#### AWS credentials and services
 
-Set environment variables or update `application.properties`:
+Set these environment variables and replace the literal `fake` credentials in `application.properties` with `aws.s3.access-key=${AWS_ACCESS_KEY_ID}` and `aws.s3.secret-key=${AWS_SECRET_ACCESS_KEY}`. Configure S3 CORS for the frontend origin:
 
 ```bash
 export AWS_ACCESS_KEY_ID=your_access_key
@@ -117,82 +132,84 @@ export AWS_S3_BUCKET_NAME=your-bucket-name
 export AWS_SQS_QUEUE_URL=https://sqs.region.amazonaws.com/account/queue-name
 ```
 
-#### Run Backend
+#### Start the backend
+
+Build and run the Spring Boot application:
 
 ```bash
-# Build project
 mvn clean install
-
-# Run application
 mvn spring-boot:run
 ```
 
-Backend will start at `http://localhost:8080`
+The backend runs at `http://localhost:8080` by default.
 
-### 3. Frontend Setup
+### 3. Configure and start the frontend
+
+From the project root, move to the frontend directory and install its dependencies:
 
 ```bash
 cd frontend
-
-# Install dependencies
 npm install
+```
 
-# Configure API endpoint (optional)
-# Edit src/services/api.js if backend is not on localhost:8080
+If the backend runs at a different address, set `REACT_APP_API_URL` in `frontend/.env`. The client in `frontend/src/services/api.js` defaults to `http://localhost:8080`.
 
-# Start development server
+Start the development server:
+
+```bash
 npm start
 ```
 
-Frontend will start at `http://localhost:3000`
+The frontend runs at `http://localhost:3000` by default.
 
-### 4. Create Admin User
+### 4. Set up an administrator account
 
-After first run, create an admin user in database:
-
-```sql
-UPDATE "user" SET role = 'ROLE_ADMIN' WHERE username = 'admin';
-```
-
-Or register a new user and update role:
+After the application has started and the database has been initialized, an existing user can be assigned the administrator role:
 
 ```sql
-INSERT INTO "user" (username, password, role, storage_quota, storage_used, create, write, read)
-VALUES ('admin', '$2a$08$...', 'ROLE_ADMIN', 1073741824, 0, true, true, true);
+UPDATE `user`
+SET role = 'ROLE_ADMIN'
+WHERE username = 'admin';
 ```
 
-## ⚙️ Configuration
+## Configuration
 
-### Environment Variables
+### Environment variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `AWS_ACCESS_KEY_ID` | AWS access key | Required |
-| `AWS_SECRET_ACCESS_KEY` | AWS secret key | Required |
-| `AWS_REGION` | AWS region | `ap-southeast-1` |
-| `AWS_S3_BUCKET_NAME` | S3 bucket name | Required |
-| `AWS_SQS_QUEUE_URL` | SQS queue URL | Required |
-| `IBM_COS_ACCESS_KEY_ID` | IBM COS access key | Optional |
-| `IBM_COS_SECRET_ACCESS_KEY` | IBM COS secret key | Optional |
-| `IBM_COS_BUCKET_NAME` | IBM COS bucket name | Optional |
+| Variable | Description | Requirement |
+|---|---|---|
+| `AWS_ACCESS_KEY_ID` | AWS access key ID | Required |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret access key | Required |
+| `AWS_REGION` | AWS region | `ap-southeast-1` by default |
+| `AWS_S3_BUCKET_NAME` | Name of the S3 bucket | Required |
+| `AWS_SQS_QUEUE_URL` | URL of the SQS queue | Required |
+| `STORAGE_PRIMARY_PROVIDER` | Provider for new uploads: `S3` or `IBM_COS` | `S3` by default |
+| `INTERNAL_API_KEY` | Shared key for internal backup callbacks | Required when configuring backup callbacks |
+| `IBM_COS_BUCKET_NAME` | Name of the IBM COS bucket | Optional |
 
-### Database Configuration
+For IBM COS, configure `ibm.cos.access-key`, `ibm.cos.secret-key`, `ibm.cos.endpoint`, and `ibm.cos.region` in `application.properties`. Backup is disabled in the example (`backup.enabled=false`); configure SQS, Lambda, and internal callbacks before enabling it.
+
+### Database and connection pool
+
+The following properties configure the database connection and HikariCP connection pool:
 
 ```properties
 spring.datasource.url=jdbc:postgresql://host:port/database
 spring.datasource.username=username
 spring.datasource.password=password
 
-# Connection Pool Settings
+# Connection pool
 spring.datasource.hikari.maximum-pool-size=50
 spring.datasource.hikari.minimum-idle=10
 spring.datasource.hikari.connection-timeout=30000
 ```
 
-### Server Configuration
+### Server settings
+
+The following example configures the embedded Tomcat thread pool and HTTP session timeout:
 
 ```properties
-# Tomcat Thread Pool
+# Tomcat thread pool
 server.tomcat.threads.max=300
 server.tomcat.threads.min-spare=30
 server.tomcat.max-connections=10000
@@ -201,7 +218,9 @@ server.tomcat.max-connections=10000
 server.servlet.session.timeout=30m
 ```
 
-## 📚 API Documentation
+## API Reference
+
+The examples below illustrate the main API endpoints. See the [backend controllers](./src/main/java/com/example/valetkey/controller) and [frontend API client](./frontend/src/services/api.js) for details.
 
 ### Authentication
 
@@ -215,10 +234,10 @@ Content-Type: application/json
 }
 ```
 
-### File Operations
+### File operations
 
 ```http
-# Generate upload URL
+# Generate an upload URL
 POST /api/files/upload-url
 {
   "fileName": "example.pdf",
@@ -226,32 +245,32 @@ POST /api/files/upload-url
   "folderId": 1
 }
 
-# List files
+# List files in a folder
 GET /api/files/list?folderId=1&page=0&size=20
 
-# Download file
+# Download a file
 GET /api/files/{fileId}/download
 
-# Delete file
+# Delete a file
 DELETE /api/files/{fileId}
 
 # Search files
 GET /api/files/search?query=example&page=0&size=20
 ```
 
-### Admin Operations
+### Administrative operations
 
 ```http
-# Get all users
+# Retrieve the user list
 GET /admin/user-list
 
-# Update user quota
+# Update a user's storage quota
 PUT /admin/quota/{userId}
 {
   "storageQuotaGb": 2.0
 }
 
-# Update permissions
+# Update a user's permissions
 POST /admin/permission/{userId}
 {
   "create": true,
@@ -259,114 +278,106 @@ POST /admin/permission/{userId}
   "write": true
 }
 
-# Get system stats
+# Retrieve system statistics
 GET /admin/stats?top=5
 ```
 
-See [API Documentation](./docs/API.md) for complete API reference.
+## Usage Examples
 
-## 🎯 Usage Examples
+### Upload a file
 
-### Upload File
+The upload process uses a presigned URL. The client first requests an upload URL from the backend, uploads the file directly to S3, and then confirms the upload.
 
 ```javascript
 import { fileAPI } from './services/api';
 
-// 1. Generate presigned URL
+// 1. Request a presigned upload URL
 const response = await fileAPI.generateUploadUrl('document.pdf', 1024000, folderId);
 const { uploadUrl, fileId } = response.data;
 
-// 2. Upload directly to S3
+// 2. Upload the file directly to S3
 await fileAPI.uploadToS3(file, uploadUrl);
 
-// 3. Confirm upload
+// 3. Confirm the upload with the backend
 await fileAPI.confirmUpload(fileId, file.type);
 ```
 
-### Bulk Operations
+### Bulk operations
+
+The client can also perform operations on multiple files:
 
 ```javascript
-// Bulk delete
+// Delete multiple files
 await fileAPI.bulkDelete([fileId1, fileId2, fileId3]);
 
-// Bulk move
+// Move multiple files to another folder
 await fileAPI.bulkMove([fileId1, fileId2], targetFolderId);
 
-// Bulk download (ZIP)
+// Download multiple files as a ZIP archive
 const response = await fileAPI.bulkDownload([fileId1, fileId2]);
 window.open(response.data.downloadUrl);
 ```
 
-## 🧪 Testing
+## Testing
 
-### Load Testing
+The repository includes a [JMeter load test plan](./jmeter/valetkey-load-test.jmx). Open it in Apache JMeter and configure the host, port, credentials, and test parameters for your environment. Measure performance against your deployment.
 
-The project includes Locust load test scripts:
+## Project Structure
+
+```text
+Cloud-based-storage/
+|-- src/main/java/com/example/valetkey/
+|   |-- config/
+|   |-- controller/
+|   |-- lambda/
+|   |-- model/
+|   |-- repository/
+|   |-- service/
+|   `-- storage/
+|-- src/main/resources/application.properties.example
+|-- frontend/
+|-- grafana/
+|-- jmeter/
+`-- pom.xml
+```
+
+The Java package remains `com.example.valetkey`, and Maven currently produces `demo-0.0.1-SNAPSHOT.jar`. These existing code identifiers are retained; the project is named **Cloud Based Storage**.
+
+## Security
+
+The project includes the following security measures:
+
+- Session-based user authentication.
+- Role-based access control (RBAC).
+- Password hashing with BCrypt.
+- CORS configuration.
+- JPA-based database access to help prevent SQL injection.
+- XSS protection.
+- File upload validation.
+
+## Deployment
+
+### Build for production
+
+Build the backend JAR:
 
 ```bash
-# Install Locust
-pip install locust
-
-# Run load test
-locust -f scripts/locustfile.py --host=http://localhost:8080
-```
-
-### Performance Benchmarks
-
-- **Upload URL Generation**: < 100ms (async)
-- **File Upload**: Direct to S3 (bypasses server)
-- **Concurrent Users**: Tested up to 500 users
-- **Response Time**: P95 < 2s under load
-
-## 📁 Project Structure
-
-```
-valetKeyCloud/
-├── src/main/java/com/example/valetkey/
-│   ├── config/          # Configuration classes
-│   ├── controller/      # REST controllers
-│   ├── model/           # Entity models
-│   ├── repository/      # JPA repositories
-│   ├── service/         # Business logic
-│   └── lambda/          # AWS Lambda handlers
-├── src/main/resources/
-│   ├── application.properties.example
-│   └── static/
-├── frontend/
-│   ├── src/
-│   │   ├── components/  # React components
-│   │   └── services/    # API clients
-│   └── public/
-├── docs/                # Documentation
-└── scripts/              # Utility scripts
-```
-
-## 🔒 Security
-
-- ✅ Session-based authentication
-- ✅ Role-based access control (RBAC)
-- ✅ Password encryption (BCrypt)
-- ✅ CORS configuration
-- ✅ SQL injection prevention (JPA)
-- ✅ XSS protection
-- ✅ Secure file upload validation
-
-## 🚀 Deployment
-
-### Production Build
-
-```bash
-# Backend
 mvn clean package
 java -jar target/demo-0.0.1-SNAPSHOT.jar
-
-# Frontend
-cd frontend
-npm run build
-# Serve build/ directory with nginx or similar
 ```
 
-### Docker (Optional)
+Build the frontend:
+
+```bash
+cd frontend
+npm run build
+```
+
+The generated frontend build can be served using Nginx or another static file server.
+
+### Docker
+
+The following Dockerfile provides a basic image for running the backend JAR:
 
 ```dockerfile
 FROM openjdk:17-jdk-slim
@@ -374,24 +385,28 @@ COPY target/demo-0.0.1-SNAPSHOT.jar app.jar
 ENTRYPOINT ["java", "-jar", "/app.jar"]
 ```
 
-### Environment Setup
+### Deployment checklist
 
-1. Set all required environment variables
-2. Configure database connection
-3. Set up AWS S3 bucket and SQS queue
-4. Configure CORS for frontend domain
-5. Set up reverse proxy (nginx) if needed
+1. Set the required environment variables.
+2. Configure the database connection.
+3. Create and configure the AWS S3 bucket and SQS queue.
+4. Configure CORS for the frontend domain.
+5. Set up a reverse proxy, such as Nginx, if required.
 
-## 📊 Monitoring
+## Monitoring
 
-### CloudWatch Metrics
+### CloudWatch metrics
 
-- Upload success/failure rates
-- Backup latency
-- Storage usage trends
-- API response times
+The application tracks the following metrics through CloudWatch:
 
-### Actuator Endpoints
+- Upload success and failure rates.
+- Backup processing latency.
+- Storage usage trends.
+- API response times.
+
+### Spring Boot Actuator
+
+The following Actuator endpoints are available for health checks and metrics:
 
 ```http
 GET /actuator/health
@@ -399,15 +414,12 @@ GET /actuator/metrics
 GET /actuator/prometheus
 ```
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are welcome! Please follow these steps:
+Contributions are welcome at [lennoxiepeal/Cloud-based-storage](https://github.com/lennoxiepeal/Cloud-based-storage). To propose a change:
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-
-
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feature/your-feature`.
+3. Commit your changes: `git commit -m "Describe your changes"`.
+4. Push the branch: `git push origin feature/your-feature`.
+5. Open a pull request.
