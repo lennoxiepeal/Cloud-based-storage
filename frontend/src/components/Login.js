@@ -21,7 +21,11 @@ function Login({ onLoginSuccess }) {
         onLoginSuccess(response.data.user);
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setError(
+        err.response?.status === 401
+          ? 'Incorrect login details. Please check your username or password and try again.'
+          : err.response?.data?.message || 'Login failed. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
@@ -31,7 +35,7 @@ function Login({ onLoginSuccess }) {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1>☁️ Cloud Storage</h1>
+          <h1>Cloud Storage</h1>
           <p>Sign in to access your files</p>
         </div>
 
@@ -39,7 +43,7 @@ function Login({ onLoginSuccess }) {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Username</label>
+            <label className="form-label">Username:</label>
             <input
               type="text"
               className="form-input"
@@ -52,7 +56,7 @@ function Login({ onLoginSuccess }) {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Password</label>
+            <label className="form-label">Password:</label>
             <input
               type="password"
               className="form-input"

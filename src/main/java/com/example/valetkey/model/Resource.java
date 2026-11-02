@@ -20,7 +20,7 @@ public class Resource {
     private String filePath; // Object key within storageProvider's bucket
 
     @Column(name = "storage_provider")
-    private String storageProvider = "S3"; // Which StorageProvider holds the primary copy (S3)
+    private String storageProvider = "S3"; // Which StorageProvider holds the primary copy (S3, IBM_COS, ...)
 
     @Column(name = "original_name")
     private String originalName;

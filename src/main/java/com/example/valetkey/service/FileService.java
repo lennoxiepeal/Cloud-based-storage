@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 
 @Service
 public class FileService {
@@ -47,6 +48,12 @@ public class FileService {
 
     @Autowired
     private SQSService sqsService;
+
+    @Autowired
+    private BackupService backupService;
+
+    @Autowired
+    private CloudWatchMetricsService cloudWatchMetricsService;
 
     @Autowired
     private StorageQuotaService storageQuotaService;
@@ -163,11 +170,13 @@ public class FileService {
         resourceRepository.save(resource);
         try {
             sqsService.sendBackupMessage(resource.getId(), resource.getFilePath(), resource.getFileSize());
+            cloudWatchMetricsService.recordBackupResult("PENDING", resource.getFilePath());
         } catch (Exception ex) {
             log.error("Failed to send backup message to SQS for {}: {}", resource.getFilePath(), ex.getMessage());
             resource.setBackupStatus("FAILED");
             resource.setBackupError("Failed to enqueue backup: " + ex.getMessage());
             resourceRepository.save(resource);
+            cloudWatchMetricsService.recordBackupResult("FAILED", resource.getFilePath());
         }
 
         log.info("File upload confirmed: {} by user: {}", resource.getFileName(), user.getUsername());
@@ -189,6 +198,7 @@ public class FileService {
 
     @Transactional(readOnly = true)
     public String getDownloadUrl(Long fileId, User user) {
+        long startTime = System.currentTimeMillis();
         Resource resource = getFile(fileId, user);
 
         if (!user.isRead()) {
@@ -197,6 +207,17 @@ public class FileService {
 
         int expiryMinutes = 10;
         String downloadUrl = storage(resource).generatePresignedDownloadUrl(resource.getFilePath(), expiryMinutes, user);
+        
+        long duration = System.currentTimeMillis() - startTime;
+        double latencySeconds = duration / 1000.0;
+        try {
+            List<Dimension> dimensions = new ArrayList<>();
+            dimensions.add(Dimension.builder().name("Operation").value("Download").build());
+            dimensions.add(Dimension.builder().name("ObjectKey").value(resource.getFilePath()).build());
+            cloudWatchMetricsService.recordCustomMetric("FileOperationLatency", latencySeconds, dimensions);
+        } catch (Exception e) {
+            log.debug("Failed to record download metric: {}", e.getMessage());
+        }
         
         return downloadUrl;
     }

@@ -1,8 +1,8 @@
 spring.application.name=valetKey
 
-spring.datasource.url=jdbc:postgresql://YOUR_RDS_ENDPOINT:5432/YOUR_DATABASE_NAME
-spring.datasource.username=YOUR_DATABASE_USERNAME
-spring.datasource.password=YOUR_DATABASE_PASSWORD
+spring.datasource.url=jdbc:mysql://localhost:3306/valetkey?useSSL=false&allowPublicKeyRetrieval=true
+spring.datasource.username=root
+spring.datasource.password=root
 
 spring.datasource.hikari.maximum-pool-size=50
 spring.datasource.hikari.minimum-idle=10
@@ -45,23 +45,33 @@ spring.mvc.async.request-timeout=300000
 
 aws.s3.region=${AWS_REGION:ap-southeast-1}
 aws.s3.bucket-name=${AWS_S3_BUCKET_NAME:your-bucket-name}
-aws.s3.access-key=${AWS_ACCESS_KEY_ID}
-aws.s3.secret-key=${AWS_SECRET_ACCESS_KEY}
+aws.s3.access-key=fake
+aws.s3.secret-key=fake
 
+# Which StorageProvider new uploads go to: S3 or IBM_COS
 storage.primary-provider=${STORAGE_PRIMARY_PROVIDER:S3}
 
+backup.enabled=false
+ibm.cos.bucket-name=${IBM_COS_BUCKET_NAME:your-ibm-bucket}
+ibm.cos.access-key=fake
+ibm.cos.secret-key=fake
+
 aws.sqs.queue-url=${AWS_SQS_QUEUE_URL:https://sqs.REGION.amazonaws.com/ACCOUNT_ID/queue-name}
+
+aws.cloudwatch.namespace=${AWS_CLOUDWATCH_NAMESPACE:ValetKey/Backup}
 
 internal.api.key=${INTERNAL_API_KEY:}
 internal.api.endpoint=${INTERNAL_API_ENDPOINT:http://localhost:8080/}
 
-management.endpoints.web.exposure.include=health
+management.endpoints.web.exposure.include=health,metrics,prometheus
+management.endpoint.metrics.enabled=true
 
+logging.level.com.example.valetkey.service.CloudWatchMetricsService=INFO
 logging.level.com.example.valetkey.service.SQSService=INFO
 logging.level.com.example.valetkey.service.FileService=INFO
 
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
 spring.jpa.properties.hibernate.globally_quoted_identifiers=true
 spring.jpa.properties.hibernate.globally_quoted_identifiers_skip_column_definitions=true
 logging.level.org.springframework=INFO

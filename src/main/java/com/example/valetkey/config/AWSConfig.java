@@ -11,6 +11,7 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
 @Configuration
 public class AWSConfig {
@@ -50,6 +51,21 @@ public class AWSConfig {
                     .build();
         } else {
             return SqsClient.builder()
+                    .region(Region.of(region))
+                    .build();
+        }
+    }
+
+    @Bean
+    public CloudWatchClient cloudWatchClient() {
+        if (accessKey != null && !accessKey.isEmpty() && secretKey != null && !secretKey.isEmpty()) {
+            AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKey, secretKey);
+            return CloudWatchClient.builder()
+                    .region(Region.of(region))
+                    .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
+                    .build();
+        } else {
+            return CloudWatchClient.builder()
                     .region(Region.of(region))
                     .build();
         }

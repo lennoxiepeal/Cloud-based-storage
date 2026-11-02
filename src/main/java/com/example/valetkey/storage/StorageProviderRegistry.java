@@ -9,7 +9,8 @@ import java.util.stream.Collectors;
 
 /**
  * Resolves the StorageProvider to use at runtime. Spring injects every bean
- * that implements StorageProvider (currently only AWSS3Service) into the constructor automatically — no wiring needed
+ * that implements StorageProvider (AWSS3Service, IbmCosStorageProvider, and
+ * any future ones) into the constructor automatically — no wiring needed
  * when a new provider is added, it just has to implement the interface.
  */
 @Component

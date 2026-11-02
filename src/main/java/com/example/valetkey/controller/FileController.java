@@ -35,6 +35,9 @@ public class FileController {
     @Autowired
     private ResourceRepository resourceRepository;
 
+    @Autowired
+    private com.example.valetkey.service.CloudWatchMetricsService cloudWatchMetricsService;
+
     @PostMapping("/upload-url")
     public CompletableFuture<ResponseEntity<Map<String, Object>>> generateUploadUrl(
             @RequestBody Map<String, Object> request,
@@ -562,6 +565,58 @@ public class FileController {
         return map;
     }
     
+    @GetMapping("/test-cloudwatch-metrics")
+    public ResponseEntity<?> testCloudWatchMetrics(HttpSession session) {
+        try {
+            User sessionUser = (User) session.getAttribute("user");
+            if (sessionUser == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Not authenticated"));
+            }
+            
+            String testObjectKey = "test-metrics/" + System.currentTimeMillis() + ".txt";
+            
+            cloudWatchMetricsService.recordBackupResult("PENDING", testObjectKey);
+            log.info("Sent metric: BackupSuccess (Status=PENDING) for {}", testObjectKey);
+            
+            cloudWatchMetricsService.recordBackupResult("COMPLETED", testObjectKey);
+            log.info("Sent metric: BackupSuccess (Status=COMPLETED) for {}", testObjectKey);
+            
+            double testLatency = 1.0 + (Math.random() * 9.0);
+            cloudWatchMetricsService.recordBackupLatency(testObjectKey, testLatency);
+            log.info("Sent metric: BackupLatency = {} seconds for {}", testLatency, testObjectKey);
+            
+            double testThroughput = 1.0 + (Math.random() * 19.0);
+            cloudWatchMetricsService.recordBackupThroughput(testObjectKey, testThroughput);
+            log.info("Sent metric: BackupThroughput = {} MB/s for {}", testThroughput, testObjectKey);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Test metrics sent to CloudWatch!");
+            response.put("namespace", "ValetKey/Backup");
+            response.put("testObjectKey", testObjectKey);
+            response.put("metrics", Map.of(
+                "BackupSuccess (PENDING)", 1,
+                "BackupSuccess (COMPLETED)", 1,
+                "BackupLatency", testLatency + " seconds",
+                "BackupThroughput", testThroughput + " MB/s"
+            ));
+            response.put("note", "Wait 2-5 minutes, then check AWS CloudWatch Console → Metrics → ValetKey/Backup");
+            response.put("grafana", "After 5 minutes, refresh your Grafana dashboard");
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            log.error("Failed to send test metrics: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(
+                    "success", false,
+                    "error", e.getMessage(),
+                    "note", "Check application logs for details. Verify AWS credentials and CloudWatch permissions."
+                ));
+        }
+    }
+
     @GetMapping("/search/advanced")
     public ResponseEntity<?> advancedSearch(
             @RequestParam(value = "query", required = false) String query,
