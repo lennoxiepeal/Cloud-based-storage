@@ -34,6 +34,9 @@ public class FileService {
 
     private static final Logger log = LoggerFactory.getLogger(FileService.class);
 
+    @org.springframework.beans.factory.annotation.Value("${backup.enabled:false}")
+    private boolean backupEnabled;
+
     @Autowired
     private ResourceRepository resourceRepository;
 
@@ -58,6 +61,7 @@ public class FileService {
     @Autowired
     private StorageQuotaService storageQuotaService;
 
+    @Transactional
     public Map<String, Object> generateUploadUrl(String fileName, Long fileSize, Long folderId, User user) {
         if (!user.isCreate() || !user.isWrite()) {
             throw new RuntimeException("User does not have permission to upload files");
@@ -138,7 +142,7 @@ public class FileService {
         }
 
         Long actualStorageUsed = resourceRepository.getTotalStorageUsedByUser(user);
-        if (actualStorageUsed + resource.getFileSize() > user.getStorageQuota()) {
+        if (actualStorageUsed > user.getStorageQuota()) {
             log.warn("Storage quota exceeded for user {}: used={}, quota={}, file={}",
                 user.getUsername(), actualStorageUsed, user.getStorageQuota(), resource.getFileSize());
             
@@ -161,11 +165,12 @@ public class FileService {
 
         resource = resourceRepository.save(resource);
 
-        user.setStorageUsed(actualStorageUsed + resource.getFileSize());
+        user.setStorageUsed(actualStorageUsed);
         userRepository.save(user);
         
         storageQuotaService.invalidateStorageCache(user.getId());
 
+        if (backupEnabled) {
         resource.setBackupStatus("PENDING");
         resourceRepository.save(resource);
         try {
@@ -177,6 +182,7 @@ public class FileService {
             resource.setBackupError("Failed to enqueue backup: " + ex.getMessage());
             resourceRepository.save(resource);
             cloudWatchMetricsService.recordBackupResult("FAILED", resource.getFilePath());
+        }
         }
 
         log.info("File upload confirmed: {} by user: {}", resource.getFileName(), user.getUsername());
@@ -224,6 +230,7 @@ public class FileService {
 
     @Transactional
     public void deleteFile(Long fileId, User user) {
+        if (!user.isWrite()) throw new RuntimeException("User does not have permission to modify files");
         Resource resource = getFile(fileId, user);
 
         storage(resource).deleteObject(resource.getFilePath());
@@ -305,6 +312,7 @@ public class FileService {
 
     @Transactional
     public String generatePublicLink(Long fileId, User user) {
+        if (!user.isWrite()) throw new RuntimeException("User does not have permission to modify files");
         Resource resource = getFile(fileId, user);
         
         if (resource.getPublicLinkToken() == null) {
@@ -317,6 +325,7 @@ public class FileService {
 
     @Transactional
     public void revokePublicLink(Long fileId, User user) {
+        if (!user.isWrite()) throw new RuntimeException("User does not have permission to modify files");
         Resource resource = getFile(fileId, user);
         resource.revokePublicLink();
         resourceRepository.save(resource);
@@ -360,6 +369,7 @@ public class FileService {
 
     @Transactional
     public Resource moveFile(Long fileId, Long targetFolderId, User user) {
+        if (!user.isWrite()) throw new RuntimeException("User does not have permission to modify files");
         Resource resource = getFile(fileId, user);
         
         Folder targetFolder = null;
@@ -374,6 +384,7 @@ public class FileService {
 
     @Transactional
     public Resource renameFile(Long fileId, String newName, User user) {
+        if (!user.isWrite()) throw new RuntimeException("User does not have permission to modify files");
         Resource resource = getFile(fileId, user);
 
         if (newName == null || newName.trim().isEmpty()) {
@@ -386,6 +397,7 @@ public class FileService {
 
     @Transactional
     public void bulkDeleteFiles(List<Long> fileIds, User user) {
+        if (!user.isWrite()) throw new RuntimeException("User does not have permission to modify files");
         List<Resource> resources = resourceRepository.findByIdsAndUploader(fileIds, user);
         
         long totalSize = 0;
@@ -418,6 +430,7 @@ public class FileService {
 
     @Transactional
     public void bulkMoveFiles(List<Long> fileIds, Long targetFolderId, User user) {
+        if (!user.isWrite()) throw new RuntimeException("User does not have permission to modify files");
         List<Resource> resources = resourceRepository.findByIdsAndUploader(fileIds, user);
         
         Folder targetFolder = null;
@@ -441,6 +454,7 @@ public class FileService {
 
     @Transactional(readOnly = true)
     public String generateBulkDownloadUrl(List<Long> fileIds, User user) {
+        if (!user.isRead()) throw new RuntimeException("User does not have permission to download files");
         if (fileIds == null || fileIds.isEmpty()) {
             throw new RuntimeException("No files selected for download");
         }
@@ -454,18 +468,22 @@ public class FileService {
         try {
             tempZip = Files.createTempFile("bulk-download-", ".zip");
 
+            Set<String> entryNames = new HashSet<>();
             try (ZipOutputStream zos = new ZipOutputStream(
                     new BufferedOutputStream(Files.newOutputStream(tempZip)))) {
 
                 for (Resource resource : resources) {
                     try (InputStream fileStream = storage(resource).getObjectInputStream(resource.getFilePath())) {
-                        ZipEntry entry = new ZipEntry(
-                            resource.getFileName() != null ? resource.getFileName() : resource.getId() + ".bin");
+                        String entryName = resource.getFileName() != null ? resource.getFileName() : resource.getId() + ".bin";
+                        entryName = entryName.replace('\\', '/');
+                        entryName = entryName.substring(entryName.lastIndexOf('/') + 1);
+                        if (!entryNames.add(entryName)) entryName = resource.getId() + "-" + entryName;
+                        ZipEntry entry = new ZipEntry(entryName);
                         zos.putNextEntry(entry);
                         fileStream.transferTo(zos);
                         zos.closeEntry();
                     } catch (Exception e) {
-                        log.error("Error adding file {} to ZIP: {}", resource.getFileName(), e.getMessage());
+                        throw new RuntimeException("Unable to add file to ZIP: " + resource.getFileName(), e);
                     }
                 }
             }

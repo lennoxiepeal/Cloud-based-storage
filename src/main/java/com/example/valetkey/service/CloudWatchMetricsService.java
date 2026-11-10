@@ -17,6 +17,9 @@ public class CloudWatchMetricsService {
 
     private static final Logger log = LoggerFactory.getLogger(CloudWatchMetricsService.class);
 
+    @Value("${aws.cloudwatch.enabled:true}")
+    private boolean enabled;
+
     @Autowired
     private CloudWatchClient cloudWatchClient;
 
@@ -24,6 +27,7 @@ public class CloudWatchMetricsService {
     private String namespace;
 
     public void recordBackupLatency(String objectKey, double latencySeconds) {
+        if (!enabled) return;
         try {
             MetricDatum datum = MetricDatum.builder()
                     .metricName("BackupLatency")
@@ -51,6 +55,7 @@ public class CloudWatchMetricsService {
     }
 
     public void recordBackupResult(String status, String objectKey) {
+        if (!enabled) return;
         try {
             double value = "COMPLETED".equals(status) ? 1.0 : 0.0;
 
@@ -80,6 +85,7 @@ public class CloudWatchMetricsService {
     }
 
     public void recordBackupThroughput(String objectKey, double megabytesPerSecond) {
+        if (!enabled) return;
         try {
             double bytesPerSecond = megabytesPerSecond * 1024.0 * 1024.0;
             
@@ -110,6 +116,7 @@ public class CloudWatchMetricsService {
     }
 
     public void recordCustomMetric(String metricName, double value, List<Dimension> dimensions) {
+        if (!enabled) return;
         try {
             MetricDatum datum = MetricDatum.builder()
                     .metricName(metricName)

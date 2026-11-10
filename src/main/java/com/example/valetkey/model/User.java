@@ -89,6 +89,7 @@ public class User {
         this.username = username;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public String getPassword() {
         return password;
     }

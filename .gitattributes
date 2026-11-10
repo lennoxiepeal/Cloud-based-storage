@@ -1,2 +1,5 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+
+# Keep local launcher scripts executable under WSL checkouts
+*.sh text eol=lf

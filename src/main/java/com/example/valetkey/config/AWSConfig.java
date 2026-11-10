@@ -25,20 +25,22 @@ public class AWSConfig {
     @Value("${aws.s3.secret-key}")
     private String secretKey;
 
+    @Value("${aws.s3.endpoint:}")
+    private String endpoint;
+
     @Bean
+    @org.springframework.context.annotation.Primary
     public S3Client s3Client() {
-        if (accessKey != null && !accessKey.isEmpty() && secretKey != null && !secretKey.isEmpty()) {
-            AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKey, secretKey);
-            return S3Client.builder()
-                    .region(Region.of(region))
-                    .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                    .build();
-        } else {
-            // Use default credentials provider (from environment, IAM role, etc.)
-            return S3Client.builder()
-                    .region(Region.of(region))
-                    .build();
+        var builder = S3Client.builder().region(Region.of(region));
+        if (!accessKey.isBlank() && !secretKey.isBlank()) {
+            builder.credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)));
         }
+        if (!endpoint.isBlank()) {
+            builder.endpointOverride(java.net.URI.create(endpoint));
+            builder.serviceConfiguration(software.amazon.awssdk.services.s3.S3Configuration.builder()
+                    .pathStyleAccessEnabled(true).chunkedEncodingEnabled(false).build());
+        }
+        return builder.build();
     }
 
     @Bean

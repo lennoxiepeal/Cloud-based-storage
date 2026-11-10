@@ -8,6 +8,29 @@ Cloud Based Storage is a cloud-based file storage application built with Spring 
 [![MySQL](https://img.shields.io/badge/MySQL-8-blue.svg)](https://www.mysql.com/)
 [![AWS S3](https://img.shields.io/badge/AWS-S3-orange.svg)](https://aws.amazon.com/s3/)
 
+## Run locally with one command
+
+On **Linux x86_64 or Ubuntu/WSL2**, clone and start:
+
+```bash
+git clone https://github.com/lennoxiepeal/Cloud-based-storage.git
+cd Cloud-based-storage
+./scripts/start-local.sh
+```
+
+First start downloads Java 17, Node.js, and Maven into `.tools/`, installs locked dependencies, and builds the application. Allow several minutes and an internet connection. Later starts reuse the installation; changed application sources trigger a rebuild. Base tools required: Bash, curl, tar, xz, Python 3, and util-linux (standard Ubuntu packages). No AWS account, Docker, MySQL, or preinstalled Java/Node/Maven is needed.
+
+Open **http://localhost:8080**. Sign in as `demo` / `demo123` or `admin` / `admin123`.
+
+```bash
+./scripts/stop-local.sh     # Stop both services; preserve your data
+./scripts/status-local.sh  # Check service status
+```
+
+The local profile stores metadata in persistent H2 and file bytes in persistent S3-compatible storage under `.local-data/`. Local data, downloaded runtimes, logs, and build artifacts are excluded from Git. A new clone starts with fresh demo/admin accounts and sample files in `demo-files/`; uploaded files are not copied between machines. Real AWS/IBM backup and CloudWatch integrations are disabled locally.
+
+See [DEMO_GUIDE.md](./DEMO_GUIDE.md) for the recording walkthrough and [VERIFICATION.md](./VERIFICATION.md) for test coverage. The cloud configuration instructions below describe a separate deployment option.
+
 ## Architecture
 
 <img width="1476" height="1506" alt="Cloud Based Storage architecture diagram" src="https://github.com/user-attachments/assets/a8a9889a-6310-4657-8549-2b8c1409f7a7" />
@@ -152,7 +175,7 @@ cd frontend
 npm install
 ```
 
-If the backend runs at a different address, set `REACT_APP_API_URL` in `frontend/.env`. The client in `frontend/src/services/api.js` defaults to `http://localhost:8080`.
+For the separate frontend development server, set `REACT_APP_API_URL=http://localhost:8080` in `frontend/.env`. The client defaults to the same origin, as used by the packaged local deployment in [DEMO_GUIDE.md](./DEMO_GUIDE.md).
 
 Start the development server:
 

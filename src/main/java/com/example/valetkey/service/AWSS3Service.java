@@ -42,6 +42,9 @@ public class AWSS3Service implements StorageProvider {
     @Value("${aws.s3.secret-key:}")
     private String secretKey;
 
+    @Value("${aws.s3.endpoint:}")
+    private String endpoint;
+
     @Override
     public String getProviderName() {
         return "S3";
@@ -53,13 +56,7 @@ public class AWSS3Service implements StorageProvider {
             throw new RuntimeException("User does not have permission to upload files");
         }
 
-        try (S3Presigner presigner = createPresigner();
-             S3Client s3 = S3Client.builder()
-                     .region(Region.AP_SOUTHEAST_1)
-                     .build()) {
-
-
-
+        try (S3Presigner presigner = createPresigner()) {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(objectKey)
@@ -233,18 +230,16 @@ public class AWSS3Service implements StorageProvider {
     }
 
     private S3Presigner createPresigner() {
-        if (accessKey != null && !accessKey.isEmpty() && secretKey != null && !secretKey.isEmpty()) {
-            software.amazon.awssdk.auth.credentials.AwsBasicCredentials awsCreds =
-                    software.amazon.awssdk.auth.credentials.AwsBasicCredentials.create(accessKey, secretKey);
-            return S3Presigner.builder()
-                    .region(software.amazon.awssdk.regions.Region.of(region))
-                    .credentialsProvider(software.amazon.awssdk.auth.credentials.StaticCredentialsProvider.create(awsCreds))
-                    .build();
-        } else {
-            return S3Presigner.builder()
-                    .region(software.amazon.awssdk.regions.Region.of(region))
-                    .build();
+        var builder = S3Presigner.builder().region(Region.of(region));
+        if (!accessKey.isBlank() && !secretKey.isBlank()) {
+            builder.credentialsProvider(software.amazon.awssdk.auth.credentials.StaticCredentialsProvider.create(
+                    software.amazon.awssdk.auth.credentials.AwsBasicCredentials.create(accessKey, secretKey)));
         }
+        if (!endpoint.isBlank()) {
+            builder.endpointOverride(java.net.URI.create(endpoint));
+            builder.serviceConfiguration(software.amazon.awssdk.services.s3.S3Configuration.builder()
+                    .pathStyleAccessEnabled(true).build());
+        }
+        return builder.build();
     }
 }
-

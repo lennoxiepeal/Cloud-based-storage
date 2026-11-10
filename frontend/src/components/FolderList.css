@@ -86,7 +86,8 @@
 }
 
 .btn-icon.btn-danger {
-  color: #ef4444;
+  background: #fee2e2;
+  color: #dc2626;
 }
 
 .btn-icon.btn-danger:hover:not(:disabled) {

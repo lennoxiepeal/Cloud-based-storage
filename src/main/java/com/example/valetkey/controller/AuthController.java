@@ -81,6 +81,9 @@ public class AuthController {
             return ResponseEntity.status(401).body(Map.of("message", "Not authenticated"));
         }
 
+        sessionUser = userService.findByUsername(sessionUser.getUsername()).orElseThrow();
+        session.setAttribute("user", sessionUser);
+
         Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("id", sessionUser.getId());
         userInfo.put("username", sessionUser.getUsername());

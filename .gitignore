@@ -52,3 +52,13 @@ frontend/build/
 frontend/node_modules/
 frontend/.pnp
 frontend/.pnp.js
+
+# Local demo runtime and persistent state
+.tools/
+.local-data/
+logs/
+
+src/main/resources/static/
+
+scripts/__pycache__/
+demo-files/quota-test.bin

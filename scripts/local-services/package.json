@@ -1,0 +1,9 @@
+{
+  "name": "cloud-storage-local-services",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "@playwright/test": "1.56.1",
+    "s3rver": "3.7.1"
+  }
+}

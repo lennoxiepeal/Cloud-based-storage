@@ -1,0 +1,15 @@
+CLOUD BASED STORAGE — FINAL ASSIGNMENT
+
+Goal: Store and organize files with authenticated access.
+Architecture: React UI → Spring Boot API → metadata database.
+File bytes travel directly to S3-compatible storage using presigned URLs.
+
+Demo checklist:
+- Register and sign in
+- Create nested folders and upload files
+- Search, rename, move, and download
+- Share a file publicly and revoke its link
+- Demonstrate bulk actions, quotas, and permissions
+
+Local deployment uses persistent H2 and S3rver.
+AWS/IBM backup integrations require real cloud services and are disabled locally.

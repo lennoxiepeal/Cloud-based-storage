@@ -19,8 +19,12 @@ public class FolderService {
     @Autowired
     private FolderRepository folderRepository;
 
+    @Autowired
+    private FileService fileService;
+
     @Transactional
     public Folder createFolder(String folderName, Long parentFolderId, User owner) {
+        if (!owner.isWrite()) throw new RuntimeException("User does not have permission to modify folders");
         if (folderName == null || folderName.trim().isEmpty()) {
             throw new RuntimeException("Folder name is required");
         }
@@ -36,9 +40,7 @@ public class FolderService {
             parentFolder = folderRepository.findByIdAndOwnerAndNotDeleted(parentFolderId, owner)
                 .orElseThrow(() -> new RuntimeException("Parent folder not found"));
             
-            if (isCircularReference(parentFolder, parentFolderId)) {
-                throw new RuntimeException("Cannot create folder: circular reference detected");
-            }
+
         }
 
         if (parentFolder != null) {
@@ -146,6 +148,7 @@ public class FolderService {
 
     @Transactional
     public Folder renameFolder(Long folderId, String newName, User owner) {
+        if (!owner.isWrite()) throw new RuntimeException("User does not have permission to modify folders");
         Folder folder = getFolder(folderId, owner);
 
         if (newName == null || newName.trim().isEmpty()) {
@@ -176,6 +179,7 @@ public class FolderService {
 
     @Transactional
     public Folder moveFolder(Long folderId, Long targetParentFolderId, User owner) {
+        if (!owner.isWrite()) throw new RuntimeException("User does not have permission to modify folders");
         Folder folder = getFolder(folderId, owner);
 
         Folder targetParent = null;
@@ -183,7 +187,7 @@ public class FolderService {
             targetParent = folderRepository.findByIdAndOwnerAndNotDeleted(targetParentFolderId, owner)
                 .orElseThrow(() -> new RuntimeException("Target parent folder not found"));
             
-            if (isDescendant(folder, targetParentFolderId)) {
+            if (isCircularReference(targetParent, folderId)) {
                 throw new RuntimeException("Cannot move folder into itself or its descendants");
             }
         }
@@ -209,8 +213,20 @@ public class FolderService {
 
     @Transactional
     public void deleteFolder(Long folderId, boolean deleteContents, User owner) {
+        if (!owner.isWrite()) throw new RuntimeException("User does not have permission to modify folders");
         Folder folder = getFolder(folderId, owner);
 
+        List<Folder> children = folderRepository.findByOwnerAndParentFolderAndNotDeleted(owner, folder);
+        var files = fileService.getAllFiles(owner, folderId);
+        if (!deleteContents && (!children.isEmpty() || !files.isEmpty())) {
+            throw new RuntimeException("Folder is not empty. Select delete contents to remove it.");
+        }
+        for (Folder child : children) {
+            deleteFolder(child.getId(), true, owner);
+        }
+        for (var file : files) {
+            fileService.deleteFile(file.getId(), owner);
+        }
         folder.moveToTrash();
         folderRepository.save(folder);
 

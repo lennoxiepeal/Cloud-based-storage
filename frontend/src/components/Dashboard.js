@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaFolder, FaPlus, FaSearch } from 'react-icons/fa';
+import { FaPlus, FaSearch } from 'react-icons/fa';
 import { fileAPI, folderAPI } from '../services/api';
 import FileUpload from './FileUpload';
 import FileList from './FileList';
@@ -10,6 +10,7 @@ import './Dashboard.css';
 function Dashboard({ user, onLogout }) {
   const [files, setFiles] = useState([]);
   const [folders, setFolders] = useState([]);
+  const [allFolders, setAllFolders] = useState([]);
   const [currentFolderId, setCurrentFolderId] = useState(null);
   const [breadcrumb, setBreadcrumb] = useState([]);
   const [storageInfo, setStorageInfo] = useState(null);
@@ -34,6 +35,7 @@ function Dashboard({ user, onLogout }) {
   });
   const [searchResults, setSearchResults] = useState({ files: [], folders: [] });
   const [isSearching, setIsSearching] = useState(false);
+  const [searchActive, setSearchActive] = useState(false);
 
   const isAdmin = user.role === 'ROLE_ADMIN';
 
@@ -42,7 +44,8 @@ function Dashboard({ user, onLogout }) {
       setLoading(false);
       return;
     }
-    loadData();
+    if (searchActive) handleSearch();
+    else loadData();
   }, [isAdmin, currentFolderId, currentPage]);
 
   const loadData = async () => {
@@ -61,7 +64,8 @@ function Dashboard({ user, onLogout }) {
       // Load all folders for move operation
       const allFoldersRes = await folderAPI.getTree();
       const flatFolders = flattenFolders(allFoldersRes.data.tree || []);
-      setFolders(flatFolders.length > 0 ? flatFolders : folderList);
+      setFolders(folderList);
+      setAllFolders(flatFolders);
 
       // Load breadcrumb
       const breadcrumbRes = await folderAPI.getBreadcrumb(currentFolderId);
@@ -105,6 +109,7 @@ function Dashboard({ user, onLogout }) {
       loadData();
       setSearchResults({ files: [], folders: [] });
       setIsSearching(false);
+      setSearchActive(false);
       return;
     }
 
@@ -133,6 +138,7 @@ function Dashboard({ user, onLogout }) {
       setTotalPages(filesResponse.data.totalPages || 0);
       setTotalItems(filesResponse.data.totalItems || 0);
       setSearchResults({ files, folders });
+      setSearchActive(true);
     } catch (err) {
       console.error('Search failed:', err);
       alert('Search failed');
@@ -158,6 +164,7 @@ function Dashboard({ user, onLogout }) {
   };
 
   const handleNavigate = (folderId) => {
+    setSearchActive(false);
     setCurrentFolderId(folderId);
     setSearchQuery('');
     setCurrentPage(0); // Reset to first page when navigating
@@ -176,6 +183,8 @@ function Dashboard({ user, onLogout }) {
       setCurrentFolderId(null);
       setCurrentPage(0);
     }
+    setSearchActive(false);
+    setSearchQuery('');
     setSelectedFiles([]);
   };
 
@@ -359,6 +368,8 @@ function Dashboard({ user, onLogout }) {
                   setSearchFilters({ fileType: '', minSize: '', maxSize: '' });
                   setSearchQuery('');
                   setShowAdvancedSearch(false);
+                  setSearchActive(false);
+                  setCurrentPage(0);
                   loadData();
                 }}
               >
@@ -429,7 +440,7 @@ function Dashboard({ user, onLogout }) {
         </div>
 
         {/* Folders */}
-        {!isSearching && folders.length > 0 && !searchQuery && (
+        {!isSearching && !searchActive && folders.length > 0 && !searchQuery && (
           <div className="card" style={{ marginBottom: '1rem' }}>
             <div className="card-header">
               Folders ({folders.length})
@@ -439,13 +450,13 @@ function Dashboard({ user, onLogout }) {
               onFolderUpdated={loadData}
               onFolderDeleted={loadData}
               onNavigate={handleNavigate}
-              allFolders={folders}
+              allFolders={allFolders}
             />
           </div>
         )}
 
         {/* Search Results - Folders */}
-        {isSearching && searchResults.folders.length > 0 && (
+        {searchActive && searchResults.folders.length > 0 && (
           <div className="card" style={{ marginBottom: '1rem' }}>
             <div className="card-header">
               Search Results - Folders ({searchResults.folders.length})
@@ -467,7 +478,7 @@ function Dashboard({ user, onLogout }) {
                 setSearchQuery('');
                 setSearchResults({ files: [], folders: [] });
               }}
-              allFolders={folders}
+              allFolders={allFolders}
             />
           </div>
         )}
@@ -504,7 +515,7 @@ function Dashboard({ user, onLogout }) {
           </div>
           <FileList
             files={files}
-            folders={folders}
+            folders={allFolders}
             selectedFiles={selectedFiles}
             onToggleSelection={toggleFileSelection}
             onFileDeleted={loadData}
@@ -584,7 +595,7 @@ function Dashboard({ user, onLogout }) {
                 onChange={(e) => setSelectedTargetFolder(e.target.value || null)}
               >
                 <option value="">📁 Root (My Files)</option>
-                {folders.map((folder) => (
+                {allFolders.map((folder) => (
                   <option key={folder.id} value={folder.id}>
                     📁 {folder.name} {folder.fullPath ? `(${folder.fullPath})` : ''}
                   </option>

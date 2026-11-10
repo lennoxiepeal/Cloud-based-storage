@@ -51,7 +51,7 @@ function FileUpload({ currentFolderId, onUploadSuccess }) {
       return { success: true, fileName: file.name };
     } catch (err) {
       setUploadProgress(prev => ({ ...prev, [index]: -1 })); // -1 indicates error
-      return { success: false, fileName: file.name, error: err.message };
+      return { success: false, fileName: file.name, error: err.response?.data?.message || err.message };
     }
   };
 
@@ -78,7 +78,7 @@ function FileUpload({ currentFolderId, onUploadSuccess }) {
     const failed = results.filter(r => !r.success).length;
 
     if (failed > 0) {
-      const failedFiles = results.filter(r => !r.success).map(r => r.fileName).join(', ');
+      const failedFiles = results.filter(r => !r.success).map(r => `${r.fileName}: ${r.error}`).join('\n');
       alert(`Upload completed: ${successful} succeeded, ${failed} failed.\nFailed files: ${failedFiles}`);
     } else {
       alert(`All ${successful} files uploaded successfully!`);
