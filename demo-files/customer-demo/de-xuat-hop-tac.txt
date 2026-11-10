@@ -1,0 +1,15 @@
+ĐỀ XUẤT HỢP TÁC — KHÁCH HÀNG AN PHÁT
+
+Tài liệu minh họa cho video giới thiệu Cloud Storage.
+Tên khách hàng và nội dung dự án đều là dữ liệu giả định.
+
+Mục tiêu
+Tập trung tài liệu dự án tại một nơi để dễ tìm kiếm, sắp xếp và chia sẻ.
+
+Phạm vi đề xuất
+1. Tổ chức tài liệu theo từng khách hàng và thư mục con.
+2. Chia sẻ tài liệu qua đường dẫn khi cần trao đổi với người nhận.
+3. Quản lý dung lượng và quyền thao tác của từng tài khoản.
+
+Bước tiếp theo
+Trao đổi nhu cầu thực tế và thống nhất phạm vi triển khai.

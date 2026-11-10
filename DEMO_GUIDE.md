@@ -36,30 +36,13 @@ Each new clone has fresh demo/admin accounts and local sample files. Existing up
 
 The local app and storage service bind to all WSL interfaces so Windows localhost forwarding can reach them. Use this demo on a trusted network. In a Windows browser on this WSL machine, use the same localhost URL. To pick sample files in Windows, browse to `\\wsl.localhost\Ubuntu-24.04\home\hoang\workspace\Cloud-based-storage\demo-files` (replace Ubuntu-24.04 with your distribution name if different).
 
-## Suggested recording: 8–12 minutes
+## Suggested recording: 4–5 minutes
 
-Use two browser profiles or a private window for the administrator so you can switch between accounts. Save downloaded files if the browser asks; text/images may open in a tab because download URLs serve their original content types.
+Follow **[DEMO_SCRIPT_VI.md](./DEMO_SCRIPT_VI.md)** for a timed **4:45 customer-facing demo**. It contains Vietnamese narration to read aloud, English screen instructions, exact filenames and UI labels, browser-session preparation, and the expected screen after each scene.
 
-| Step | What to do | What it demonstrates |
-|---|---|---|
-| 1 | Explain React → Spring Boot → H2 metadata + S3-compatible file storage. Sign in with an incorrect password once, then correct it. | Architecture, authentication, validation |
-| 2 | Optionally register a new account through **Sign Up**, sign in, and show its empty storage. Use `demo` for the remaining steps. | Registration and account isolation |
-| 3 | Create `Final Assignment`, enter it with a single click, create `Reports` inside, and navigate using breadcrumbs and Back. | Nested folders and navigation |
-| 4 | Choose `project-report.txt`, `storage-results.csv`, and `architecture.svg` from `demo-files/`. Click **Upload 3 File(s)** and wait for success. | Multiple uploads, upload progress, file metadata, storage meter |
-| 5 | Download a file and open it. Explain that the backend grants a time-limited URL and bytes go directly to object storage. | Download and presigned access |
-| 6 | Rename the report; search its new name. Clear the search and press Enter. Open **Advanced Search**, filter Text or Images, then **Clear Filters**. Size filters use MB. Search `Reports` to show folder search. | Rename, filename/folder search, content type and size filters |
-| 7 | Move one file into `Reports`; navigate into it and back. Rename or move an empty test folder. | Single file/folder organization |
-| 8 | Click the file's share icon, copy its link, and open it in a private window without signing in. Show its download. Return to the owner, revoke the link, and reload the private window. | Public sharing, anonymous access, revocation |
-| 9 | Select two files with checkboxes. Download their ZIP and open it. Bulk move them; then delete disposable copies. Show the storage meter decrease. | Selection, ZIP download, bulk move/delete, accounting |
-| 10 | Sign in as `admin` in the second profile. Show total users, used storage, total quota, overall use, and top storage users. | Administration and monitoring |
-| 11 | On the `demo` row, set quota to **0.1 GB**, save, and refresh the user page. Try uploading `quota-test.bin` (110 MiB); show the quota error. Restore quota to **1 GB**. | Per-user quota enforcement |
-| 12 | Disable **Read** for `demo`, save permissions, and try downloading as that user. Restore Read. Disable Create/Write to show upload denial, then restore all three. | Live administrator permission controls |
-| 13 | Set global quota to **2 GB**, click **Apply to All**, and show the updated rows. Restore to **1 GB**. | System-wide quota settings |
-| 14 | Delete an empty test folder. To remove a nonempty one, select **delete contents** in its dialog. Log out and show the login screen. | Folder deletion and session termination |
+Use the three customer-oriented sample files in **[`demo-files/customer-demo/`](./demo-files/customer-demo/)**. The script follows a fictional An Phát customer project through organization, uploads, search, sharing, bulk actions, and administration. It includes a revoked public link and a rejected download after a permission change as visible proof of control.
 
-For pagination, upload more than 20 small files and show Next/Previous plus **Select All (Page)** / **Select All Records**. This is optional if recording time is limited; pagination is covered by the API verification.
-
-Deletion is permanent for file bytes. There is no working recycle-bin UI in this project. Revoking a share prevents new download URLs; an already-issued presigned URL remains valid until it expires. Links are reachable on this machine only in this deployment.
+Prepare the browser sessions and run the application before the timer starts. Installation, terminal commands, and optional feature tests are outside the recording. The final scene ends at **4:45**, leaving a small margin before the five-minute limit.
 
 ## Verification
 
@@ -74,7 +57,7 @@ Browser tests are optional and require Chromium and its Linux libraries. After f
 
 If startup fails, read `logs/app.log` and `logs/storage.log`. Ports 8080 and 4569 must be available. Preserve `.local-data/database.mv.db` together with `.local-data/objects/` when backing up the demo; stop services before copying them.
 
-The browser verification replaces sample folders named `Demo workspace` or `Demo workspace <timestamp>` in the demo account. Keep your recording work in `Final Assignment` as suggested above.
+The browser verification replaces sample folders named `Demo workspace` or `Demo workspace <timestamp>` in the demo account. Keep your recording work in the separate `Khách hàng An Phát` folder used by the short script.
 
 ## Windows/WSL connection troubleshooting
 

@@ -1,0 +1,9 @@
+GHI CHÚ NHÁP — DỰ ÁN AN PHÁT
+
+Đây là tệp mẫu dùng để minh họa tải lên, tải ZIP, di chuyển và xóa hàng loạt.
+Có thể xóa tệp này trong lúc quay demo.
+
+Các nhu cầu cần xác nhận:
+- Cách tổ chức tài liệu theo khách hàng.
+- Người được phép tải tài liệu xuống.
+- Hạn mức dung lượng cho từng tài khoản.
