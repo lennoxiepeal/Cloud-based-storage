@@ -38,11 +38,11 @@ The local app and storage service bind to all WSL interfaces so Windows localhos
 
 ## Suggested recording: 4–5 minutes
 
-Follow **[DEMO_SCRIPT_VI.md](./DEMO_SCRIPT_VI.md)** for a timed **4:45 customer-facing demo**. It contains Vietnamese narration to read aloud, English screen instructions, exact filenames and UI labels, browser-session preparation, and the expected screen after each scene.
+Follow **[DEMO_SCRIPT_VI.md](./DEMO_SCRIPT_VI.md)** for a simple **4:45 presentation to your professor**. It starts by listing the app's main features, then provides Vietnamese narration and English click instructions for each feature.
 
-Use the three customer-oriented sample files in **[`demo-files/customer-demo/`](./demo-files/customer-demo/)**. The script follows a fictional An Phát customer project through organization, uploads, search, sharing, bulk actions, and administration. It includes a revoked public link and a rejected download after a permission change as visible proof of control.
+**Use any small file already on your computer. No sample files, fixed filenames, or customer story are required.** You can select a second file during upload if you want to demonstrate batch actions with multiple files. The same script also works with one file.
 
-Prepare the browser sessions and run the application before the timer starts. Installation, terminal commands, and optional feature tests are outside the recording. The final scene ends at **4:45**, leaving a small margin before the five-minute limit.
+The sequence covers authentication, folders, uploads/downloads, rename/search, move/ZIP, public sharing and revocation, admin statistics, quotas, permissions, deletion, and logout. Start the app before recording. The script ends at **4:45**; rehearse once and trim loading waits to stay under five minutes.
 
 ## Verification
 
@@ -57,7 +57,7 @@ Browser tests are optional and require Chromium and its Linux libraries. After f
 
 If startup fails, read `logs/app.log` and `logs/storage.log`. Ports 8080 and 4569 must be available. Preserve `.local-data/database.mv.db` together with `.local-data/objects/` when backing up the demo; stop services before copying them.
 
-The browser verification replaces sample folders named `Demo workspace` or `Demo workspace <timestamp>` in the demo account. Keep your recording work in the separate `Khách hàng An Phát` folder used by the short script.
+The browser verification replaces sample folders named `Demo workspace` or `Demo workspace <timestamp>` in the demo account. Keep your recording work in the separate `Demo` folder used by the short script.
 
 ## Windows/WSL connection troubleshooting
 

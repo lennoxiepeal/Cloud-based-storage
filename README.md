@@ -29,7 +29,7 @@ Open **http://localhost:8080**. Sign in as `demo` / `demo123` or `admin` / `admi
 
 The local profile stores metadata in persistent H2 and file bytes in persistent S3-compatible storage under `.local-data/`. Local data, downloaded runtimes, logs, and build artifacts are excluded from Git. A new clone starts with fresh demo/admin accounts and sample files in `demo-files/`; uploaded files are not copied between machines. Real AWS/IBM backup and CloudWatch integrations are disabled locally.
 
-See [DEMO_GUIDE.md](./DEMO_GUIDE.md) for setup, [DEMO_SCRIPT_VI.md](./DEMO_SCRIPT_VI.md) for the 4:45 Vietnamese customer-demo script, and [VERIFICATION.md](./VERIFICATION.md) for test coverage. The cloud configuration instructions below describe a separate deployment option.
+See [DEMO_GUIDE.md](./DEMO_GUIDE.md) for setup, [DEMO_SCRIPT_VI.md](./DEMO_SCRIPT_VI.md) for the 4:45 Vietnamese presentation script, and [VERIFICATION.md](./VERIFICATION.md) for test coverage. The cloud configuration instructions below describe a separate deployment option.
 
 ## Architecture
 
